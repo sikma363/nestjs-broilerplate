@@ -1,3 +1,6 @@
-import appConfig from './app.config';
+import appConfig, { AppConfigType } from './app.config';
 
+export type AllConfigsType = {
+  app: AppConfigType;
+};
 export default [appConfig];
