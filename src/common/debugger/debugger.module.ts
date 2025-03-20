@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigsType } from 'src/configs';
 import winston, { LoggerOptions } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import { DEBUGGER_NAME } from './constant/debugger.constant';
+import {
+  DebuggerHttpResponseMiddleware,
+  DebuggerHttpMiddleware,
+  DebuggerHttpWriteIntoConsoleMiddleware,
+  DebuggerHttpWriteIntoFileMiddleware,
+} from './middleware/debugger-http.middleware';
 
 @Module({})
 export class DebuggerModule {
@@ -83,5 +89,16 @@ export class DebuggerModule {
     };
 
     return loggerOptions;
+  }
+
+  configure(consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(
+        DebuggerHttpResponseMiddleware,
+        DebuggerHttpMiddleware,
+        DebuggerHttpWriteIntoConsoleMiddleware,
+        DebuggerHttpWriteIntoFileMiddleware,
+      )
+      .forRoutes('*');
   }
 }
